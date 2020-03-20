@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>圆型可点击区域</title>
+</head>
+
+<body>
+  <!-- 第一种，使用border-radius和cursor -->
+  <div style="border: 1px solid yellow;display: inline-block;" id="square">
+    <div class="circle" id="circle"></div>
+  </div>
+
+  第二种，使用img 和 map 和 area
+    <img src="./pic.jpg" usemap="#circle" alt="" width="300px" height="200px">
+    <map name="circle" id="circle">
+      <area shape="circle" coords="150,100,100" href="https://www.w3school.com.cn/tags/tag_map.asp" target="_blank" alt="">
+    </map>
+
+</body>
+<script>
+  let pointer = document.getElementById("square")
+  function foo(target, callback) {
+    target.onclick = function (e) {
+      e = e || window.event
+      let x0 = 50,
+        y0 = 50
+      let x = e.offsetX,
+        y = e.offsetY
+      let len = Math.abs(Math.sqrt(Math.pow((x - x0), 2) + Math.pow((y - y0), 2)))
+      if (len <= 50) callback()
+      else {
+        alert("外界区域")
+      }
+    }
+  }
+  foo(pointer, function () {
+    alert("进入圆型点击区域")
+  })
+</script>
+<style>
+  .circle {
+    background-color: pink;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+  }
+</style>
+
+</html>
