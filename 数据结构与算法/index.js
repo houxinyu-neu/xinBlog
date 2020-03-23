@@ -1,36 +1,42 @@
-// 数组扁平化
-let arr = [1,
-  [1, 2, 3],
-  [3, 4],
-  [4, 5, [6, 7, [10]]]
-]
-let res = [1, 2, 3, 3, 4, 4, 5, 6, 7, 10]
+var line = '1 22 22 33 22 12 45 44 5'
 
-// ES6的扩展运算符、some方法
-// function flatten(arr) {
-//   while (arr.some(item => Array.isArray(item))) {
-//     arr = [].concat(...arr)
-//   }
-//   return arr
-// }
+function foo(line) {
+  let arr = line.split(" ").map(item => Number(item))
+  let len = arr.length
+  let res = []
+  if (len <= 1) return
+  if (len >= 2) {
+    if (arr[0] > arr[1]) {
+      res.push(1)
+    }
+    var first = Math.max(arr[0], arr[1])
+    var second = Math.min(arr[0], arr[1])
+  }
+  for (let i = 2; i < len; i++) {
+    if (arr[i] < first && arr[i] >= second) {
+      res.push(i)
+      second = arr[i]
+    } else if (arr[i] > first) {
+      second = first
+      first = arr[i]
+    }
+  }
+  return res.length === 0 ? -1 : res.join(" ")
+}
+console.log(foo(line))
+// var line = '1 22 22 33 22 12 45 44 5'
 
-// join()方法、
-// function flatten(arr) {
-//   return arr.join(",").split(",").map(item => parseInt(item))
-// }
-
-// toString() 方法、 split() 方法和Number() 方法
-// function flatten(arr) {
-//   let res = arr.toString().split(",").map(item => Number(item))
-//   return res
-// }
-
-
-// forEach()方法、map()方法、concat()方法
-// function foo(arr) {
+// function foo(line) {
+//   let arr = line.split(" ").map(item => Number(item))
+//   let len = arr.length
 //   let res = []
-//   arr.forEach(item => Array.isArray(item) ? res = res.concat(foo(item)) : res.push(item))
-//   return res
+//   if (len <= 1) return -1
+//   for (let i = 1; i < len; i++) {
+//     let temp = arr.slice(0, i)
+//     let ins = temp.filter(item => item > arr[i]).length
+//     if (ins === 1) {
+//       res.push(i)
+//     }
+//   }
+//     return res.length === 0 ? -1 : res.join(" ")
 // }
-
-console.log(flatten(arr))
