@@ -57,5 +57,82 @@ var getKthFromEnd = function (head, k) {
 };
 ```
 
+## 第二天
+
+**收获：**
+
+**对于链表的遍历一般采取双指针策略，一个遍历当前节点，一个遍历后一节点。**
+
+**对于链表进行深拷贝复制，可采取递归的策略，并配合`Map`进行新旧链表的映射。**
+
+****
+
+1. 反转链表
+
+> 定义一个函数，输入一个链表的头节点，反转该链表并输出反转后链表的头节点。
+>
+> 示例:
+>
+> 输入: 1->2->3->4->5->NULL
+> 输出: 5->4->3->2->1->NULL
+>
+>
+> 限制：
+>
+> 0 <= 节点个数 <= 5000
+
+```javascript
+var reverseList = function (head) {
+    let prev = null, curr = head
+    while (curr) {
+        let temp = curr.next
+        curr.next = prev
+        prev = curr
+        curr = temp
+    }
+    return prev
+};
+```
+
+2. 复杂链表的复制
+
+> 请实现 copyRandomList 函数，复制一个复杂链表。在复杂链表中，每个节点除了有一个 next 指针指向下一个节点，还有一个 random 指针指向链表中的任意节点或者 null。
+>
+> 示例 1：
+>
+> 输入：head = [[7,null],[13,0],[11,4],[10,2],[1,0]]
+> 输出：[[7,null],[13,0],[11,4],[10,2],[1,0]]
+> 示例 2：
+>
+> 输入：head = [[1,1],[2,1]]
+> 输出：[[1,1],[2,1]]
+> 示例 3：
+>
+> 输入：head = [[3,null],[3,0],[3,null]]
+> 输出：[[3,null],[3,0],[3,null]]
+> 示例 4：
+>
+> 输入：head = []
+> 输出：[]
+> 解释：给定的链表为空（空指针），因此返回 null。
+
+```javascript
+var copyRandomList = function(head) {
+    function copy(node) {
+        if(node == null) return node
+        if(isRead.get(node)) return isRead.get(node)
+        let newNode = new Node(node.val)
+        isRead.set(node, newNode)
+        newNode.random = copy(node.random)
+        newNode.next = copy(node.next)
+        return newNode
+    }
+    let isRead = new Map()
+    return copy(head)
+};
+```
+
+
+
 
 
