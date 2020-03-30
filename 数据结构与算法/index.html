@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body,
+    ul,
+    li,
+    select {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    ul,
+    li {
+      list-style: none;
+    }
+
+    .calculator {
+      max-width: 300px;
+      margin: 20px auto;
+      border: 1px solid #eee;
+      border-radius: 3px;
+    }
+
+    .cal-header {
+      font-size: 16px;
+      color: #333;
+      font-weight: bold;
+      height: 48px;
+      line-height: 48px;
+      border-bottom: 1px solid #eee;
+      text-align: center;
+    }
+
+    .cal-main {
+      font-size: 14px;
+    }
+
+    .cal-main .origin-value {
+      padding: 15px;
+      height: 40px;
+      line-height: 40px;
+      font-size: 20px;
+      text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .cal-main .origin-type,
+    .cal-main .target-type {
+      padding-left: 5px;
+      width: 70px;
+      font-size: 14px;
+      height: 30px;
+      border: 1px solid #eee;
+      background-color: #fff;
+      vertical-align: middle;
+      margin-right: 10px;
+      border-radius: 3px;
+    }
+
+    .cal-keyboard {
+      overflow: hidden;
+    }
+
+    .cal-items {
+      overflow: hidden;
+    }
+
+    .cal-items li {
+      user-select: none;
+      float: left;
+      display: inline-block;
+      width: 75px;
+      height: 75px;
+      text-align: center;
+      line-height: 75px;
+      border-top: 1px solid #eee;
+      border-left: 1px solid #eee;
+      box-sizing: border-box;
+    }
+
+    li:nth-of-type(4n+1) {
+      border-left: none;
+    }
+
+    li[data-action=operator] {
+      background: #f5923e;
+      color: #fff;
+    }
+
+    .buttons {
+      float: left;
+      width: 75px;
+    }
+
+    .buttons .btn {
+      width: 75px;
+      background-color: #fff;
+      border-top: 1px solid #eee;
+      border-left: 1px solid #eee;
+      height: 150px;
+      line-height: 150px;
+      text-align: center;
+    }
+
+    .btn-esc {
+      color: #ff5a34;
+    }
+
+    .btn-backspace {
+      position: relative;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="calculator">
+    <header class="cal-header">简易计算器</header>
+    <main class="cal-main">
+      <div class="origin-value">0</div>
+      <div class="cal-keyboard">
+        <ul class="cal-items">
+          <li data-action="num">7</li>
+          <li data-action="num">8</li>
+          <li data-action="num">9</li>
+          <li data-action="operator">÷</li>
+          <li data-action="num">4</li>
+          <li data-action="num">5</li>
+          <li data-action="num">6</li>
+          <li data-action="operator">x</li>
+          <li data-action="num">1</li>
+          <li data-action="num">2</li>
+          <li data-action="num">3</li>
+          <li data-action="operator">-</li>
+          <li data-action="num">0</li>
+          <li data-action="operator">清空</li>
+          <li data-action="operator">=</li>
+          <li data-action="operator">+</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+<script>
+  var Calculator = {
+    init: function () {
+      var that = this;
+      if (!that.isInited) {
+        that.isInited = true;
+        // 保存操作信息
+        // total: Number, 总的结果
+        // next: String, 下一个和 total 进行运算的数据
+        // action: String, 操作符号
+        that.data = {
+          total: 0,
+          next: '',
+          action: ''
+        };
+        that.bindEvent();
+      }
+    },
+    bindEvent: function () {
+      var that = this;
+      // 请补充代码：获取 .cal-keyboard 元素
+      var keyboardEl = document.getElementsByClassName("cal-keyboard")[0];
+      keyboardEl && keyboardEl.addEventListener('click', function (event) {
+        // 请补充代码：获取当前点击的dom元素
+        var target = event.target;
+        // 请补充代码：获取target的 data-action 值
+        var action = event.target.dataset.action;
+        // 请补充代码：获取target的内容
+        var value = event.target.innerText;
+        if (action === 'num' || action === 'operator') {
+          that.result(value, action === 'num');
+        }
+      });
+    },
+    result: function (action, isNum) {
+      var that = this;
+      var data = that.data;
+      if (isNum) {
+        data.next = data.next === '0' ? action : (data.next + action);
+        !data.action && (data.total = 0);
+      } else if (action === '清空') {
+        // 请补充代码：设置清空时的对应状态
+        data.total = 0;
+        data.next = "";
+        data.action = "";
+      } else if (action === '=') {
+        if (data.next || data.action) {
+          data.total = that.calculate(data.total, data.next, data.action);
+          data.next = '';
+          data.action = '';
+        }
+      } else if (!data.next) {
+        data.action = action;
+      } else if (data.action) {
+        data.total = that.calculate(data.total, data.next, data.action);
+        data.next = '';
+        data.action = action;
+      } else {
+        data.total = +data.next || 0;
+        data.next = '';
+        data.action = action;
+      }
+
+      // ���补充代码：获取 .origin-value 元素
+      var valEl = document.getElementsByClassName("origin-value")[0];
+      valEl && (valEl.innerHTML = data.next || data.total || '0');
+    },
+    calculate: function (n1, n2, operator) {
+      n1 = +n1 || 0;
+      n2 = +n2 || 0;
+      if (operator === '÷') {
+        // 请补充代码：获取除法的结果
+        if (n2 == 0) {
+          return 0
+        }
+        let temp = (n1 / n2).toString().length
+        return temp < 5 ? (n1 / n2) : (n1 / n2).toFixed(2);
+      } else if (operator === 'x') {
+        // 请补充代码：获取乘法的结果
+        let temp = (n1 * n2).toString().length
+        return temp < 5 ? (n1 * n2) : (n1 * n2).toFixed(2);
+      } else if (operator === '+') {
+        // 请补充代码：获取加法的结果
+        let temp = (n1 + n2).toString().length
+        return temp < 5 ? (n1 + n2) : (n1 + n2).toFixed(2);
+      } else if (operator === '-') {
+        // 请补充代码：获取减法的结果
+        let temp = (n1 - n2).toString().length
+        return temp < 5 ? (n1 - n2) : (n1 - n2).toFixed(2);
+      }
+    }
+  };
+  Calculator.init();
+</script>
+
+</html>
+<script>
+  /*  var Calculator = {
+    init: function () {
+        var that = this;
+        if (!that.isInited) {
+            that.isInited = true;
+            // 保存操作信息
+            // total: Number, 总的结果
+            // next: String, 下一个和 total 进行运算的数据
+            // action: String, 操作符号
+            that.data = {total: 0, next: '', action: ''};
+            that.bindEvent();
+        }
+    },
+    bindEvent: function () {
+        var that = this;
+        // 请补充代码：获取 .cal-keyboard 元素
+        var keyboardEl = null;
+        keyboardEl && keyboardEl.addEventListener('click', function (event) {
+            // 请补充代码：获取当前点击的dom元素
+            var target = null;
+            // 请补充代码：获取target的 data-action 值
+            var action = '';
+            // 请补充代码：获取target的内容
+            var value = '';
+            if (action === 'num' || action === 'operator') {
+                that.result(value, action === 'num');
+            }
+        });
+    },
+    result: function (action, isNum) {
+        var that = this;
+        var data = that.data;
+        if (isNum) {
+            data.next = data.next === '0' ? action : (data.next + action);
+            !data.action && (data.total = 0);
+        } else if (action === '清空') {
+            // 请补充代码：设置清空时的对应状态
+            data.total = undefined;
+            data.next = undefined;
+            data.action = undefined;
+        } else if (action === '=') {
+            if (data.next || data.action) {
+                data.total = that.calculate(data.total, data.next, data.action);
+                data.next = '';
+                data.action = '';
+            }
+        } else if (!data.next) {
+            data.action = action;
+        } else if (data.action) {
+            data.total = that.calculate(data.total, data.next, data.action);
+            data.next = '';
+            data.action = action;
+        } else {
+            data.total = +data.next || 0;
+            data.next = '';
+            data.action = action;
+        }
+    
+        // ���补充代码：获取 .origin-value 元素
+        var valEl = null;
+        valEl && (valEl.innerHTML = data.next || data.total || '0');
+    },
+    calculate: function (n1, n2, operator) {
+        n1 = +n1 || 0;
+        n2 = +n2 || 0;
+        if (operator === '÷') {
+            // 请补充代码：获取除法的结果
+            if(n2 !=0 ){
+                return (n1/n2).toFixed(2)
+            }
+            return 0;
+        } else if (operator === 'x') {
+            // 请补充代码：获取乘法的结果
+            return (n1*n2).toFixed(2);
+        } else if (operator === '+') {
+            // 请补充代码：获取加法的结果
+            return (n1+n2).toFixed(2);
+        } else if (operator === '-') {
+            // 请补充代码：获取减法的结果
+            return (n1-n2).toFixed(2);
+        }
+    }
+};
+Calculator.init();
+  */
+</script>
