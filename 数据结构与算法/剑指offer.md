@@ -132,7 +132,209 @@ var copyRandomList = function(head) {
 };
 ```
 
+## 第三天
 
+1. 09两个栈实现队列
 
+> 用两个栈实现一个队列。队列的声明如下，请实现它的两个函数 appendTail 和 deleteHead ，分别完成在队列尾部插入整数和在队列头部删除整数的功能。(若队列中没有元素，deleteHead 操作返回 -1 )
+>
+> 示例 1：
+>
+> 输入：
+> ["CQueue","appendTail","deleteHead","deleteHead"]
+> [[],[3],[],[]]
+> 输出：[null,null,3,-1]
+> 示例 2：
+>
+> 输入：
+> ["CQueue","deleteHead","appendTail","appendTail","deleteHead","deleteHead"]
+> [[],[],[5],[2],[],[]]
+> 输出：[null,-1,null,null,5,2]
 
++ 思路：两个栈，一个负责输入，一个负责队列的输出。
+
+```javascript
+var CQueue = function () {
+    this.stack1 = [], this.stack2 = []
+};
+
+/** 
+ * @param {number} value
+ * @return {void}
+ */
+CQueue.prototype.appendTail = function (value) {
+    this.stack1.push(value)
+};
+
+/**
+ * @return {number}
+ */
+CQueue.prototype.deleteHead = function () {
+    if (this.stack2.length > 0) {
+        return this.stack2.pop()
+    }
+    while (this.stack1.length > 0) {
+        this.stack2.push(this.stack1.pop())
+    }
+    return this.stack2.pop() || -1
+};
+```
+
+2. 30包含`min`函数的栈
+
+> 定义栈的数据结构，请在该类型中实现一个能够得到栈的最小元素的 min 函数在该栈中，调用 min、push 及 pop 的时间复杂度都是 O(1)。
+>
+> 示例:
+>
+> MinStack minStack = new MinStack();
+> minStack.push(-2);
+> minStack.push(0);
+> minStack.push(-3);
+> minStack.min();   --> 返回 -3.
+> minStack.pop();
+> minStack.top();      --> 返回 0.
+> minStack.min();   --> 返回 -2.
+
++ 思路：使用额外的栈来维护最小值。
+
+```javascript
+/**
+ * initialize your data structure here.
+ */
+var MinStack = function () {
+    this.dataStack = []
+    this.minStack = []
+};
+
+/** 
+ * @param {number} x
+ * @return {void}
+ */
+MinStack.prototype.push = function (x) {
+    const { dataStack, minStack } = this
+    dataStack.push(x)
+    if (!minStack.length || minStack[minStack.length - 1] >= x) {
+        minStack.push(x)
+    }
+};
+
+/**
+ * @return {void}
+ */
+MinStack.prototype.pop = function () {
+    const { dataStack, minStack } = this
+    if (dataStack[dataStack.length - 1] == minStack[minStack.length - 1]) {
+        minStack.pop()
+    }
+    dataStack.pop()
+};
+
+/**
+ * @return {number}
+ */
+MinStack.prototype.top = function () {
+    const { dataStack, minStack } = this
+    return this.dataStack[dataStack.length - 1]
+};
+
+/**
+ * @return {number}
+ */
+MinStack.prototype.min = function () {
+    const { dataStack, minStack } = this
+    return minStack[minStack.length - 1] || 0
+};
+```
+
+3. 59滑动窗口的最大值
+
+> 给定一个数组 nums 和滑动窗口的大小 k，请找出所有滑动窗口里的最大值。
+>
+> 示例:
+>
+> 输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3
+> 输出: [3,3,5,5,6,7] 
+> 解释: 
+>
+>   滑动窗口的位置                最大值
+> ---------------               -----
+> [1  3  -1] -3  5  3  6  7       3
+>  1 [3  -1  -3] 5  3  6  7       3
+>  1  3 [-1  -3  5] 3  6  7       5
+>  1  3  -1 [-3  5  3] 6  7       5
+>  1  3  -1  -3 [5  3  6] 7       6
+>  1  3  -1  -3  5 [3  6  7]      7
+
+```javascript
+/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number[]}
+ */
+var maxSlidingWindow = function (nums, k) {
+    let res = [], len = nums.length
+    if (len <= 0 || k === 1) return nums
+    for (let i = 0; i <= len - k; i++) {
+        res.push(Math.max(...nums.slice(i, i + k)))
+    }
+    return res
+};
+```
+
+4. 队列的最大值
+
+> 请定义一个队列并实现函数 max_value 得到队列里的最大值，要求函数max_value、push_back 和 pop_front 的均摊时间复杂度都是O(1)。
+>
+> 若队列为空，pop_front 和 max_value 需要返回 -1
+>
+> 示例 1：
+>
+> 输入: 
+> ["MaxQueue","push_back","push_back","max_value","pop_front","max_value"]
+> [[],[1],[2],[],[],[]]
+> 输出: [null,null,null,2,1,2]
+> 示例 2：
+>
+> 输入: 
+> ["MaxQueue","pop_front","max_value"]
+> [[],[],[]]
+> 输出: [null,-1,-1]
+
++ 思路：维护一个最大值的额外队列。
+
+```javascript
+var MaxQueue = function () {
+    this.dataQueue = [], this.maxQueue = []
+};
+
+/**
+ * @return {number}
+ */
+MaxQueue.prototype.max_value = function () {
+    const { dataQueue, maxQueue } = this
+    return maxQueue[0] || -1
+};
+
+/** 
+ * @param {number} value
+ * @return {void}
+ */
+MaxQueue.prototype.push_back = function (value) {
+    const { dataQueue, maxQueue } = this
+    dataQueue.push(value)
+    while (maxQueue && maxQueue[maxQueue.length - 1] < value) {
+        maxQueue.pop()
+    }
+    maxQueue.push(value)
+};
+
+/**
+ * @return {number}
+ */
+MaxQueue.prototype.pop_front = function () {
+    const { dataQueue, maxQueue } = this
+    if (dataQueue[0] === maxQueue[0]) maxQueue.shift()
+    return dataQueue.shift() || -1
+};
+```
 
