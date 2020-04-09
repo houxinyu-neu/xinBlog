@@ -1,6 +1,6 @@
 # 剑指`Offer`
 
-## 第一天
+## 第一天——链表
 
 **收获：**
 
@@ -57,7 +57,7 @@ var getKthFromEnd = function (head, k) {
 };
 ```
 
-## 第二天
+## 第二天——链表
 
 **收获：**
 
@@ -132,7 +132,7 @@ var copyRandomList = function(head) {
 };
 ```
 
-## 第三天
+## 第三天——栈和队列
 
 1. 09两个栈实现队列
 
@@ -335,6 +335,96 @@ MaxQueue.prototype.pop_front = function () {
     const { dataQueue, maxQueue } = this
     if (dataQueue[0] === maxQueue[0]) maxQueue.shift()
     return dataQueue.shift() || -1
+};
+```
+
+## 第四天——递归
+
+1. 10斐波那契数列
+
+> 写一个函数，输入 n ，求斐波那契（Fibonacci）数列的第 n 项。斐波那契数列的定义如下：
+>
+> F(0) = 0,   F(1) = 1
+> F(N) = F(N - 1) + F(N - 2), 其中 N > 1.
+> 斐波那契数列由 0 和 1 开始，之后的斐波那契数就是由之前的两数相加而得出。
+>
+> 答案需要取模 1e9+7（1000000007），如计算初始结果为：1000000008，请返回 1。
+>
+> 示例 1：
+>
+> 输入：n = 2
+> 输出：1
+> 示例 2：
+>
+> 输入：n = 5
+> 输出：5
+
++ 思路：声明额外数组，减少递归的时间复杂度。
+
+```javascript
+var fib = function (n) {
+    let res = new Array(n + 1)
+    res[0] = 0, res[1] = 1
+    for (let i = 2; i <= n; i++) {
+        res[i] = (res[i - 1] + res[i - 2]) % (1e9+7)
+    }
+    return res[n]
+};
+```
+
+2. 10青蛙跳台阶问题
+
+> 一只青蛙一次可以跳上1级台阶，也可以跳上2级台阶。求该青蛙跳上一个 n 级的台阶总共有多少种跳法。
+>
+> 答案需要取模 1e9+7（1000000007），如计算初始结果为：1000000008，请返回 1。
+>
+> 示例 1：
+>
+> 输入：n = 2
+> 输出：2
+> 示例 2：
+>
+> 输入：n = 7
+> 输出：21
+
+```javascript
+var numWays = function (n) {
+    let res = []
+    res[0] = 1, res[1] = 1, res[2] = 2
+    for (let i = 3; i <= n; i++) {
+        res[i] = (res[i - 1] + res[i - 2]) % (1e9 + 7)
+    }
+    return res[n]
+};
+```
+
+3. 07重建二叉树
+
+> 输入某二叉树的前序遍历和中序遍历的结果，请重建该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。
+>
+> 例如，给出
+>
+> 前序遍历 preorder = [3,9,20,15,7]
+> 中序遍历 inorder = [9,3,15,20,7]
+> 返回如下的二叉树：
+>
+> ​	3
+>
+>    / \
+>   9  20
+>     /  \
+>    15   7
+
++ 思路：根据根元素（基准点）得到左右的前序、中序遍历。递归实现。
+
+```javascript
+var buildTree = function (preorder, inorder) {
+    if (!preorder.length || !inorder.length) return null
+    let tree = new TreeNode(preorder[0])
+    let index = inorder.indexOf(preorder[0])
+    tree.left = buildTree(preorder.slice(1, index + 1), inorder.slice(0, index))
+    tree.right = buildTree(preorder.slice(index + 1), inorder.slice(index + 1))
+    return tree
 };
 ```
 
