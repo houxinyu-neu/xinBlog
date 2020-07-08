@@ -18,7 +18,29 @@
 
 7. `vue-router`的原理
 
-   
+   **`SPA`单页应用，`vue-router`通过改变`URL`实现不请求页面数据的情况下更新页视图。**
+
+   vue-router 提供了三种运行模式：
+
+   +  hash: 使用 URL hash 值来作路由。默认模式。
+
+     ```javascript
+     window.addEventListener('hashchange', () => {}, false)
+     ```
+
+   + history: 依赖 HTML5 History API 新增的`pushState`和`replaceState`（可对浏览器历史记录栈进行修改）。查看 HTML5 History 模式。
+
+     ```javascript
+     window.addEventListener('popstate', () => {}, false)
+     ```
+
+   + abstract: 支持所有 JavaScript 运行环境，如 Node.js 服务器端
+
+   两种对比：`HTML5 History`的模式相比`hash`有如下优势
+
+   + `pushState`可修改为同源下的任意`URL`，而`hash`直能修改`#`下的。
+   + `pushState`可设置新的`URL`与原来一致。
+   + `pushState`可传递对象数据类型，而`hash`只能传递短字符串。
 
 8. `axios`
 
