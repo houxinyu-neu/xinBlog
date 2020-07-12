@@ -66,7 +66,65 @@
 
 2. 跨域
 
-3. 事件执行顺序
+3. 事件事件循环
+
+   Js的执行机制如下（事件循环）
+
+   - 判断Js代码是同步还是异步，同步就进入主线程执行栈，异步就进入事件表。
+   - 异步事件在事件表中注册回调函数，回调函数触发后进入事件队列。
+   - 当主线程空闲时查看事件队列中是否有空闲的异步事件，若有就推入主线程。
+   - <img src="https://img-blog.csdnimg.cn/20200302213340154.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwNzgxMjkx,size_16,color_FFFFFF,t_70" alt="Js运行机制" style="zoom:50%;" />
+
+   问题一：Js如何知道主线程的执行栈为空？
+   js引擎有一个进程持续检查主线程，若主线程执行栈为空则检查事件队列，查看是否有被调用的回调函数。
+
+   + 宏任务和微任务
+     宏任务macro-task和微任务micro-task
+     **宏任务：整体代码`<script>,setTimeout(),setInterval()`**
+     **微任务：`promise,process.nextTick`**
+     不同的任务所进入的事件队列也不一样
+     执行顺序：
+     按照顺序执行宏任务（整体代码），执行微任务。完成第一回循环，再次从宏任务开始，执行微任务完成后继续循环。
+
+   ```javascript
+   console.log('1');
+   
+   setTimeout(function() {
+       console.log('2');
+       process.nextTick(function() {
+           console.log('3');
+       })
+       new Promise(function(resolve) {
+           console.log('4');
+           resolve();
+       }).then(function() {
+           console.log('5')
+       })
+   })
+   process.nextTick(function() {
+       console.log('6');
+   })
+   new Promise(function(resolve) {
+       console.log('7');
+       resolve();
+   }).then(function() {
+       console.log('8')
+   })
+   
+   setTimeout(function() {
+       console.log('9');
+       process.nextTick(function() {
+           console.log('10');
+       })
+       new Promise(function(resolve) {
+           console.log('11');
+           resolve();
+       }).then(function() {
+           console.log('12')
+       })
+   })
+   // 1,7,6,8,2,4,3,5,9,11,10,12
+   ```
 
 4. `this`绑定、`this`指向
 

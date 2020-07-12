@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <input type="text" id="in">输入
+  <p id="out"></p>输出
+</body>
+
+<script>
+  let obj = {}
+  let input = document.getElementById('in')
+  input.addEventListener('input', (e) => {
+    obj.name = e.target.value
+  }, false)
+  Object.defineProperty(obj, 'name', {
+    set(newValue) {
+      console.log(newValue)
+      document.getElementById('out').innerHTML = newValue
+    },
+    get() {
+
+    }
+  })
+</script>
+
+
+</html>
